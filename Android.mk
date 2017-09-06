@@ -29,9 +29,16 @@ LOCAL_MODULE := gatekeeper.amlogic
 LOCAL_MODULE_RELATIVE_PATH := hw
 
 LOCAL_SRC_FILES := \
-	module.cpp \
-	trusty_gatekeeper_ipc.c \
-	trusty_gatekeeper.cpp
+	GKPModule.cpp \
+	trusty/trusty_gatekeeper_ipc.c \
+	trusty/trusty_gatekeeper.cpp \
+	soft/SoftGateKeeperDevice.cpp
+
+LOCAL_STATIC_LIBRARIES := libscrypt_static
+LOCAL_C_INCLUDES := \
+  external/boringssl/src/include/ \
+  external/scrypt/lib/crypto \
+  system/core/base/include
 
 LOCAL_CLFAGS = -fvisibility=hidden -Wall -Werror
 
@@ -39,8 +46,13 @@ LOCAL_SHARED_LIBRARIES := \
 	libgatekeeper \
 	liblog \
 	libcutils \
-	libtrusty
+	libtrusty \
+	libcrypto
 
 LOCAL_MODULE_TAGS := optional
+
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 26 && echo OK),OK)
+LOCAL_PROPRIETARY_MODULE := true
+endif
 
 include $(BUILD_SHARED_LIBRARY)

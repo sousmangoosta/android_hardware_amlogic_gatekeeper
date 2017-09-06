@@ -20,26 +20,36 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include "trusty_gatekeeper.h"
+#include "trusty/trusty_gatekeeper.h"
+#include "soft/SoftGateKeeperDevice.h"
 
 using gatekeeper::TrustyGateKeeperDevice;
+using android::SoftGateKeeperDevice;
 
-static int trusty_gatekeeper_open(const hw_module_t *module, const char *name,
+static int gatekeeper_open(const hw_module_t *module, const char *name,
         hw_device_t **device) {
 
     if (strcmp(name, HARDWARE_GATEKEEPER) != 0) {
         return -EINVAL;
     }
 
-    TrustyGateKeeperDevice *gatekeeper = new TrustyGateKeeperDevice(module);
-    if (gatekeeper == NULL) return -ENOMEM;
-    *device = gatekeeper->hw_device();
+    //trusty gatekeeper don't implement, so use software instead of
+    if (true) {
+        SoftGateKeeperDevice *gatekeeper = new SoftGateKeeperDevice(module);
+        if (gatekeeper == NULL) return -ENOMEM;
+        *device = gatekeeper->sw_device();
+    }
+    else {
+        TrustyGateKeeperDevice *gatekeeper = new TrustyGateKeeperDevice(module);
+        if (gatekeeper == NULL) return -ENOMEM;
+        *device = gatekeeper->hw_device();
+    }
 
     return 0;
 }
 
 static struct hw_module_methods_t gatekeeper_module_methods = {
-    .open = trusty_gatekeeper_open,
+    .open = gatekeeper_open,
 };
 
 struct gatekeeper_module HAL_MODULE_INFO_SYM __attribute__((visibility("default"))) = {
@@ -48,8 +58,8 @@ struct gatekeeper_module HAL_MODULE_INFO_SYM __attribute__((visibility("default"
         .module_api_version = GATEKEEPER_MODULE_API_VERSION_0_1,
         .hal_api_version = HARDWARE_HAL_API_VERSION,
         .id = GATEKEEPER_HARDWARE_MODULE_ID,
-        .name = "Trusty GateKeeper HAL",
-        .author = "The Android Open Source Project",
+        .name = "AML GateKeeper HAL",
+        .author = "aml",
         .methods = &gatekeeper_module_methods,
         .dso = 0,
         .reserved = {}
