@@ -105,7 +105,7 @@ public:
     }
 
     virtual bool IsHardwareBacked() const {
-        return false;
+        return true;
     }
 
     virtual bool GetFailureRecord(uint32_t uid, secure_id_t user_id, failure_record_t *record,
