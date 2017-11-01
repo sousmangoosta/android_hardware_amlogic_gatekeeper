@@ -20,10 +20,10 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include "trusty/trusty_gatekeeper.h"
+//#include "trusty/trusty_gatekeeper.h"
 #include "soft/SoftGateKeeperDevice.h"
 
-using gatekeeper::TrustyGateKeeperDevice;
+//using gatekeeper::TrustyGateKeeperDevice;
 using android::SoftGateKeeperDevice;
 
 static int gatekeeper_open(const hw_module_t *module, const char *name,
@@ -40,9 +40,9 @@ static int gatekeeper_open(const hw_module_t *module, const char *name,
         *device = gatekeeper->sw_device();
     }
     else {
-        TrustyGateKeeperDevice *gatekeeper = new TrustyGateKeeperDevice(module);
-        if (gatekeeper == NULL) return -ENOMEM;
-        *device = gatekeeper->hw_device();
+        //TrustyGateKeeperDevice *gatekeeper = new TrustyGateKeeperDevice(module);
+        //if (gatekeeper == NULL) return -ENOMEM;
+        //*device = gatekeeper->hw_device();
     }
 
     return 0;

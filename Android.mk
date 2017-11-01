@@ -30,9 +30,10 @@ LOCAL_MODULE_RELATIVE_PATH := hw
 
 LOCAL_SRC_FILES := \
 	GKPModule.cpp \
-	trusty/trusty_gatekeeper_ipc.c \
-	trusty/trusty_gatekeeper.cpp \
 	soft/SoftGateKeeperDevice.cpp
+
+#	trusty/trusty_gatekeeper_ipc.c \
+#	trusty/trusty_gatekeeper.cpp \
 
 LOCAL_STATIC_LIBRARIES := libscrypt_static
 LOCAL_C_INCLUDES := \
@@ -46,7 +47,6 @@ LOCAL_SHARED_LIBRARIES := \
 	libgatekeeper \
 	liblog \
 	libcutils \
-	libtrusty \
 	libcrypto
 
 LOCAL_MODULE_TAGS := optional
