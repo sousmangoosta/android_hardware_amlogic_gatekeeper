@@ -59,22 +59,29 @@ int SoftGateKeeperDevice::Enroll(uint32_t uid,
             const uint8_t *desired_password, uint32_t desired_password_length,
             uint8_t **enrolled_password_handle, uint32_t *enrolled_password_handle_length) {
 
-    SizedBuffer desired_password_buffer(desired_password_length);
-    memcpy(desired_password_buffer.buffer.get(), desired_password, desired_password_length);
+    /*SizedBuffer desired_password_buffer(const_cast<uint8_t*>(desired_password),
+    desired_password_length);*/
+    //memcpy(desired_password_buffer.buffer.get(), desired_password, desired_password_length);
 
-    SizedBuffer current_password_handle_buffer(current_password_handle_length);
-    if (current_password_handle) {
+    /*SizedBuffer current_password_handle_buffer(const_cast<uint8_t*>(current_password_handle),
+    current_password_handle_length);*/
+    /*if (current_password_handle) {
         memcpy(current_password_handle_buffer.buffer.get(), current_password_handle,
                 current_password_handle_length);
-    }
+    }*/
 
-    SizedBuffer current_password_buffer(current_password_length);
-    if (current_password) {
+    /*SizedBuffer current_password_buffer(const_cast<uint8_t*>(current_password),
+    current_password_length);*/
+    /*if (current_password) {
         memcpy(current_password_buffer.buffer.get(), current_password, current_password_length);
-    }
+    }*/
 
-    EnrollRequest request(uid, &current_password_handle_buffer, &desired_password_buffer,
-            &current_password_buffer);
+    EnrollRequest request(
+      uid,
+      SizedBuffer(const_cast<uint8_t*>(current_password_handle),current_password_handle_length),
+      SizedBuffer(const_cast<uint8_t*>(desired_password),desired_password_length),
+      SizedBuffer(const_cast<uint8_t*>(current_password),current_password_length)
+    );
     EnrollResponse response;
 
     implSoft->Enroll(request, &response);
@@ -85,8 +92,9 @@ int SoftGateKeeperDevice::Enroll(uint32_t uid,
         return -EINVAL;
     }
 
-    *enrolled_password_handle = response.enrolled_password_handle.buffer.release();
-    *enrolled_password_handle_length = response.enrolled_password_handle.length;
+    //*enrolled_password_handle = response.enrolled_password_handle.buffer.release();
+    if (*enrolled_password_handle){}
+    *enrolled_password_handle_length = response.enrolled_password_handle.size();
     return 0;
 }
 
@@ -96,13 +104,20 @@ int SoftGateKeeperDevice::Verify(uint32_t uid,
         uint32_t provided_password_length, uint8_t **auth_token, uint32_t *auth_token_length,
         bool *request_reenroll) {
 
-    SizedBuffer password_handle_buffer(enrolled_password_handle_length);
-    memcpy(password_handle_buffer.buffer.get(), enrolled_password_handle,
-            enrolled_password_handle_length);
-    SizedBuffer provided_password_buffer(provided_password_length);
-    memcpy(provided_password_buffer.buffer.get(), provided_password, provided_password_length);
+    /*SizedBuffer password_handle_buffer(const_cast<uint8_t*>(enrolled_password_handle),
+    enrolled_password_handle_length);*/
+    /*memcpy(password_handle_buffer.buffer.get(), enrolled_password_handle,
+            enrolled_password_handle_length);*/
+    /*SizedBuffer provided_password_buffer(const_cast<uint8_t*>(provided_password),
+    provided_password_length);*/
+    //memcpy(provided_password_buffer.buffer.get(), provided_password, provided_password_length);
 
-    VerifyRequest request(uid, challenge, &password_handle_buffer, &provided_password_buffer);
+    VerifyRequest request(
+      uid,
+      challenge,
+      SizedBuffer(const_cast<uint8_t*>(enrolled_password_handle),enrolled_password_handle_length),
+      SizedBuffer(const_cast<uint8_t*>(provided_password),provided_password_length)
+    );
     VerifyResponse response;
 
     implSoft->Verify(request, &response);
@@ -114,8 +129,8 @@ int SoftGateKeeperDevice::Verify(uint32_t uid,
     }
 
     if (auth_token != NULL && auth_token_length != NULL) {
-       *auth_token = response.auth_token.buffer.release();
-       *auth_token_length = response.auth_token.length;
+       //*auth_token = response.auth_token.buffer.release();
+       *auth_token_length = response.auth_token.size();
     }
 
     if (request_reenroll != NULL) {
